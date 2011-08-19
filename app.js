@@ -3,6 +3,7 @@
  */
 
 var
+horoscopePageBuilder = require('./horoscope-page-builder');
 express = require('express');
 
 var PORT = process.env.VCAP_APP_PORT || 80;
@@ -14,6 +15,9 @@ var CENSORED = [[1, 8]];
 
 var app = express.createServer();
 app.get('/', home);
+for (var i = 0; i < SIGNS.length; i++) {
+    app.get('/' + getSign(i, 1), horoscope);
+}
 app.listen(PORT);
 
 function home(req, res) {
@@ -33,16 +37,28 @@ function home(req, res) {
     var links = '';
     for (var i = 0; i < SIGNS.length; i++) {
         links += '<a href="';
-        links += getSign(i, 0);
+        links += getSign(i, 1);
         links += '"><img src="'
         links += getRandomImage(i);
         links += '" width="90" height="90" border="0" alt="';
-        links += getSign(i, 0);
+        links += getSign(i, 1);
         links += '"/></a>\n';
     }
     template = template.replace('${LINKS}', links);
 
     res.send(template);
+}
+
+function horoscope(req, res) {
+    var sign = req.url.replace('/', '');
+    horoscopePageBuilder.buildHoroscopePage(sign, function(page) {
+        res.send(page);
+    });
+}
+
+function getSign(signIndex, sourceIndex) {
+    var sign = SIGNS[signIndex]; 
+    return sign[Math.min(sign.length-1, sourceIndex)];
 }
 
 function getRandomImage(signIndex) {
@@ -60,9 +76,4 @@ function getRandomImage(signIndex) {
     } while (censored);
     var imageUrl = IMAGE_SOURCES[sourceIndex] + '/' + IMAGE_PREFIXES[sourceIndex] + getSign(signIndex, sourceIndex) + '.gif';
     return imageUrl;
-}
-
-function getSign(signIndex, sourceIndex) {
-    var sign = SIGNS[signIndex]; 
-    return sign[Math.min(sign.length-1, sourceIndex)];
 }
