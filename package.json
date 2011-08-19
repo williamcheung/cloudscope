@@ -2,7 +2,8 @@
     "name": "cloudscope",
     "version": "0.0.1",
     "dependencies": {
-       "express": ""
+       "express": "",
+       "http-agent": ""
     }
 }
 
