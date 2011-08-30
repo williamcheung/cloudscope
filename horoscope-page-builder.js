@@ -1,11 +1,13 @@
 /**
  * 
  */
+
 var
 httpAgent = require('http-agent');
 
 var NUM_DAYS_TO_FETCH = 8;
 var SERVICE_URL_PREFIX = 'http://widgets.fabulously40.com/horoscope.json?sign=';
+var NO_HOROSCOPE_MSG = 'Sorry, your astrologer is having a bad day. Just a phase...';
 
 exports.buildHoroscopePage = function(sign, callback) {
     var template = '\
@@ -46,6 +48,8 @@ ${HOROSCOPES}\n\
     
     agent.addListener('next', function (err, agent) {
         var response = JSON.parse(agent.body);
+        var horoscope = response.horoscope ?
+                response.horoscope.horoscope : NO_HOROSCOPE_MSG;
         
         var date;
         if (daysAgo == 0)
@@ -56,7 +60,7 @@ ${HOROSCOPES}\n\
             date = daysAgo + ' days ago';
         
         horoscopes += '<h4 align="center">' + date + '</h4>';
-        horoscopes += '<p align="center">' + response.horoscope.horoscope + '</p>';
+        horoscopes += '<p align="center">' + horoscope + '</p>';
         
         daysAgo++;
         agent.next();
