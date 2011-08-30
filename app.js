@@ -6,12 +6,12 @@ var
 horoscopePageBuilder = require('./horoscope-page-builder');
 express = require('express');
 
-var PORT = process.env.VCAP_APP_PORT || 80;
+var PORT = process.env.PORT || process.env.VCAP_APP_PORT || 80;
 
 var SIGNS = [['capricorn'], ['aquarius'], ['pisces'], ['aries'], ['taurus'], ['gemini'], ['cancer'], ['leo'], ['virgo'], ['libra'], ['scorpio'], ['sagitarrius', 'sagittarius']];
 var IMAGE_SOURCES = ['http://www.scorpio-site.co.uk', 'http://www.uselessgraphics.com'];
 var IMAGE_PREFIXES = ['AG_', 'zod'];
-var CENSORED = [[1, 8]];
+var CENSORED = []; // [[1, 8]];
 
 var app = express.createServer();
 app.get('/', home);

@@ -1,0 +1,11 @@
+.DS_Store
+.checkstyle
+.classpath
+.fbprefs
+.pmd
+.project
+.ruleset
+.settings/
+.springBeans
+target/
+test-output/

@@ -7,6 +7,7 @@ You can refresh the animations to get a new random display using "zAp".
 Horoscopes are retrieved from a free horoscope web service. Sorry, the service 
 doesn't let us get horoscopes in the future :p
 
+Tested Aug 30 2011 using Joyent http://no.de
 Tested Aug 19 2011 using Stackato Beta: http://www.activestate.com/cloud
 
 Content credits:
