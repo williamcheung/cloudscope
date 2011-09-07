@@ -8,6 +8,8 @@ httpAgent = require('http-agent');
 var NUM_DAYS_TO_FETCH = 8;
 var SERVICE_URL_PREFIX = 'http://widgets.fabulously40.com/horoscope.json?sign=';
 var NO_HOROSCOPE_MSG = 'Sorry, your astrologer is having a bad day. Just a phase...';
+var ASTROLOGER_BUSY_MSG = 'Sorry, your astrologer is still divining...';
+var TODAYS_SCOPE = '${TODAYS_SCOPE}';
 
 exports.buildHoroscopePage = function(sign, callback) {
     var template = '\
@@ -45,6 +47,7 @@ ${HOROSCOPES}\n\
 
     var horoscopes = '';
     var daysAgo = 0;
+    var todaysScope, yesterdaysScope;
 
     agent.addListener('next', function (err, agent) {
         var response = agent.body.charAt(0) == '{' ? JSON.parse(agent.body) : null;
@@ -52,11 +55,14 @@ ${HOROSCOPES}\n\
                 response.horoscope.horoscope : NO_HOROSCOPE_MSG;
 
         var date;
-        if (daysAgo == 0)
+        if (daysAgo == 0) {
             date = 'today';
-        else if (daysAgo == 1)
+            todaysScope = horoscope;
+            horoscope = TODAYS_SCOPE;
+        } else if (daysAgo == 1) {
             date = 'yesterday';
-        else
+            yesterdaysScope = horoscope;
+        } else
             date = daysAgo + ' days ago';
 
         horoscopes += '<h4 align="center">' + date + '</h4>';
@@ -67,6 +73,10 @@ ${HOROSCOPES}\n\
     });
 
     agent.addListener('stop', function (err, agent) {
+        if (todaysScope == yesterdaysScope) {
+            todaysScope = ASTROLOGER_BUSY_MSG;
+        }
+        horoscopes = horoscopes.replace(TODAYS_SCOPE, todaysScope);
         template = template.replace('${HOROSCOPES}', horoscopes);
         callback(template);
     });
